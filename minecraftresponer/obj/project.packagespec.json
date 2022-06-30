@@ -1,0 +1,47 @@
+﻿{
+  "version": "1.0.0",
+  "restore": {
+    "projectUniqueName": "C:\\Users\\jag\\RiderProjects\\minecraftresponer\\minecraftresponer\\minecraftresponer.csproj",
+    "projectName": "minecraftresponer",
+    "projectPath": "C:\\Users\\jag\\RiderProjects\\minecraftresponer\\minecraftresponer\\minecraftresponer.csproj",
+    "outputPath": "C:\\Users\\jag\\RiderProjects\\minecraftresponer\\minecraftresponer\\obj\\",
+    "projectStyle": "PackageReference",
+    "originalTargetFrameworks": [
+      "net40"
+    ],
+    "sources": {
+      "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+      "https://api.nuget.org/v3/index.json": {}
+    },
+    "frameworks": {
+      "net40": {
+        "projectReferences": {}
+      }
+    },
+    "warningProperties": {
+      "warnAsError": [
+        "NU1605"
+      ]
+    }
+  },
+  "frameworks": {
+    "net40": {
+      "dependencies": {
+        "Newtonsoft.Json": {
+          "target": "Package",
+          "version": "[13.0.2-beta1, )"
+        },
+        "SharpZipLib": {
+          "target": "Package",
+          "version": "[0.86.0, )"
+        }
+      },
+      "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
+    }
+  },
+  "runtimes": {
+    "win7-x86": {
+      "#import": []
+    }
+  }
+}

@@ -1,0 +1,12 @@
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\bin\Debug\net40\minecraftresponer.exe.config
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\bin\Debug\net40\minecraftresponer.exe
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\bin\Debug\net40\minecraftresponer.pdb
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\obj\Debug\net40\minecraftresponer.csprojAssemblyReference.cache
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\obj\Debug\net40\minecraftresponer.AssemblyInfoInputs.cache
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\obj\Debug\net40\minecraftresponer.AssemblyInfo.cs
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\obj\Debug\net40\minecraftresponer.csproj.CoreCompileInputs.cache
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\obj\Debug\net40\minecraftresponer.exe
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\obj\Debug\net40\minecraftresponer.pdb
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\bin\Debug\net40\Newtonsoft.Json.dll
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\obj\Debug\net40\minecraftresponer.csproj.CopyComplete
+C:\Users\jag\RiderProjects\minecraftresponer\minecraftresponer\bin\Debug\net40\ICSharpCode.SharpZipLib.dll
