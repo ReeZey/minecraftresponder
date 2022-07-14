@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -15,8 +16,7 @@ namespace minecraftresponer
         private const int CONTINUE_BIT = 0x80;
 
         private static NetworkStream _stream;
-        private static List<byte> _buffer;
-        private static int _offset;
+        private static List<byte> _buffer = new List<byte>();
 
         private static void Main(string[] args)
         {
@@ -33,19 +33,10 @@ namespace minecraftresponer
             {
                 var handler = tcp.AcceptSocket();
 
-                _offset = 0;
-
-                _buffer = new List<byte>();
                 _stream = new NetworkStream(handler);
 
-                var data = new byte[ushort.MaxValue];
-
-                int count = _stream.Read(data, 0, data.Length);
-                Console.WriteLine("inc: " + PrintByteArray(data, count));
-
-
-                int length = ReadVarInt(data);
-                int packedid = ReadVarInt(data);
+                int length = ReadVarInt();
+                int packedid = ReadVarInt();
 
                 Console.WriteLine($"Packet {packedid}, len {length}");
                 
@@ -73,15 +64,14 @@ namespace minecraftresponer
                 switch (packedid)
                 {
                     case 0:
-                        int version = ReadVarInt(data);
-                        int length2 = ReadVarInt(data);
-                        string address = ReadString(data, length2);
+                        int version = ReadVarInt();
+                        string address = ReadString(ReadVarInt());
 
-                        var yep = Read(data, 2);
+                        var yep = Read(2);
                         Array.Reverse(yep); //little endian moment
-
                         var serverport = BitConverter.ToUInt16(yep, 0);
-                        int nextstate = ReadVarInt(data);
+                        
+                        int nextstate = ReadVarInt();
 
                         switch (nextstate)
                         {
@@ -91,23 +81,26 @@ namespace minecraftresponer
                                 _buffer.Clear();
                                 WriteString(str);
                                 Flush(0);
+
+                                long longvalue = BitConverter.ToInt64(Read(8), 0);
                                 
                                 _buffer.Clear();
-                                WriteLong(0);
+                                WriteBytes(BitConverter.GetBytes(longvalue));
                                 Flush(1);
 
                                 Console.WriteLine($"[{version}] [{address}] [{serverport}] [{nextstate}]");
                                 break;
                             
                             case 2:
+                                var connectionid = ReadVarInt();
+                                var identifier = ReadVarInt();
                                 
+                                var username = ReadString(ReadVarInt());
+                                
+                                Console.WriteLine($"{connectionid} {identifier} {username}");
+                                handler.Close();
                                 break;
                         }
-                        break;
-                    case 1:
-                        long ping = BitConverter.ToInt64(Read(data, 4), 0);
-                        
-                        Console.WriteLine(ping);
                         break;
                 }
 
@@ -124,29 +117,19 @@ namespace minecraftresponer
             return $"[ {string.Join(", ", newarray)} ]";
         }
 
-        #region Read/Write methods
-
-        private static byte ReadByte(byte[] buffer)
-        {
-            byte b = buffer[_offset];
-            _offset += 1;
-            return b;
-        }
-
-        private static byte[] Read(byte[] buffer, int length)
+        private static byte[] Read(int length)
         {
             var data = new byte[length];
-            Array.Copy(buffer, _offset, data, 0, length);
-            _offset += length;
+            _stream.Read(data, 0, length);
             return data;
         }
 
-        private static int ReadVarInt(byte[] buffer)
+        private static int ReadVarInt()
         {
             var value = 0;
             var size = 0;
             int b;
-            while (((b = ReadByte(buffer)) & CONTINUE_BIT) == CONTINUE_BIT)
+            while (((b = _stream.ReadByte()) & CONTINUE_BIT) == CONTINUE_BIT)
             {
                 value |= (b & SEGMENT_BITS) << (size++ * 7);
                 if (size > 5) throw new IOException("This VarInt is an imposter!");
@@ -155,10 +138,9 @@ namespace minecraftresponer
             return value | ((b & SEGMENT_BITS) << (size * 7));
         }
 
-        private static string ReadString(byte[] buffer, int length)
+        private static string ReadString(int length)
         {
-            var data = Read(buffer, length);
-            return Encoding.UTF8.GetString(data);
+            return Encoding.UTF8.GetString(Read(length));
         }
 
         private static void WriteVarInt(int value)
@@ -172,14 +154,9 @@ namespace minecraftresponer
             _buffer.Add((byte) value);
         }
 
-        private static void WriteShort(short value)
+        private static void WriteBytes(IEnumerable<byte> value)
         {
-            _buffer.AddRange(BitConverter.GetBytes(value));
-        }
-        
-        private static void WriteLong(long value)
-        {
-            _buffer.AddRange(BitConverter.GetBytes(value));
+            _buffer.AddRange(value);
         }
 
         private static void WriteString(string data)
@@ -187,11 +164,6 @@ namespace minecraftresponer
             var buffer = Encoding.UTF8.GetBytes(data);
             WriteVarInt(buffer.Length);
             _buffer.AddRange(buffer);
-        }
-
-        public static void Write(byte b)
-        {
-            _stream.WriteByte(b);
         }
 
         private static void Flush(int id = -1)
@@ -217,7 +189,5 @@ namespace minecraftresponer
             _stream.Write(packetData, 0, packetData.Length);
             _stream.Write(buffer, 0, buffer.Length);
         }
-
-        #endregion
     }
 }
